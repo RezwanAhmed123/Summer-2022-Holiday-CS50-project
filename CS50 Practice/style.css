@@ -19,9 +19,22 @@ body {
 }
 .wrapper div {
   align-items: center;
+  color: antiquewhite;
+  padding: 20px;
 }
 .wrapper div img {
   width: 95%;
+}
+.wrapper div ol {
+  font-size: large;
+}
+.wrapper div ol .list-headings {
+  font-weight: bold;
+  text-decoration-line: underline;
+  color: aqua;
+}
+.wrapper div ol ul {
+  font-size: medium;
 }
 .wrapper div #tableHead {
   font-weight: bold;
