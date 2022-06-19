@@ -13,38 +13,40 @@ body {
   color: antiquewhite;
 }
 
-div {
-  width: 600px;
+.wrapper {
+  display: grid;
+  grid-template-columns: 33% 34% 33%;
 }
-div img {
-  width: 550px;
-  position: relative;
-  left: 26px;
+.wrapper div {
+  align-items: center;
 }
-div #tableHead {
+.wrapper div img {
+  width: 95%;
+}
+.wrapper div #tableHead {
   font-weight: bold;
 }
-div table {
+.wrapper div table {
   border: 1px solid #80877f;
   text-align: center;
   font-family: Georgia, sans-serif;
   border-collapse: collapse;
   margin: 10px;
 }
-div table th {
+.wrapper div table th {
   padding: 5px;
   font-weight: bold;
   font-size: large;
   border: 1px solid #80877f;
   color: #ffe195;
 }
-div table td {
+.wrapper div table td {
   padding: 5px;
   font-size: medium;
   border: 1px solid #80877f;
   color: orange;
 }
-div table td a {
+.wrapper div table td a {
   color: #99cc00;
 }
 
