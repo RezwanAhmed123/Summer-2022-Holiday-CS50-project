@@ -3,20 +3,28 @@
     <head>
         <title>Image Search</title>
         <link rel="stylesheet" href="styling.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     </head>
     <body>
-        <form action="https://google.com/search">
-            <input type="text" name="q">
-            <input type="hidden" name="tbm" value="isch">
-            <input type="submit" value="Google Image Search">
-        </form>
+        <div class="container square-box d-flex justify-content-center align-items-center" >
+            <div>
+                <form action="https://google.com/search" class="justify-content-center">
+                    <div id="imgsearchbar">
+                        <input type="text" name="q">
+                    </div>
+                    <div>
+                        <input type="hidden" name="tbm" value="isch">
+                        <input type="submit" value="Google Image Search">
+                    </div>
+                </form>
+            </div>
+        </div>
 
-        <div>
+        <div class="side-links">
             <ul>
             <li><a href="index.html">Google Search</a></li>
             <li><a href="advanced_search.html">Google Advanced Search</a></li>
             </ul>
         </div>
-        
     </body>
 </html>

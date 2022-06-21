@@ -3,26 +3,44 @@
     <head>
         <title>Advanced Search</title>
         <link rel="stylesheet" href="styling.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     </head>
     <body>
-        <form action="https://www.google.com/search">
-            Search query with:
-            <div class="search-queries">
-            All these words: <input type="text" name="as_q">
-            Some of these words: <input type="text" name="as_epq">
-            Any of these words: <input type="text" name="as_oq">
-            None of these words: <input type="text" name="as_eq">
-            </div>
-            <input type="hidden" name="as_qdr" value="all">
-            <input type="submit" value="Google Advanced Search">
-        </form>
 
-        <div>
+        <div class="container square-box d-flex justify-content-center align-items-center" >
+            <div>
+                <form action="https://google.com/search" class="justify-content-center">
+                    <div>
+                        <div>
+                            <label>All these words: </label>
+                            <input type="text" name="as_q">
+                        </div>
+                        <div>
+                            <label>This exact word or phrase:</label>
+                            <input type="text" name="as_epq">
+                        </div>
+                        <div>
+                            <label>Any of these words:</label> 
+                            <input type="text" name="as_oq">
+                        </div>
+                        <div>
+                            <label>None of these words:</label>
+                            <input type="text" name="as_eq">
+                        </div>
+                    </div>
+                    <div id = "advsearchbutton">
+                        <input type="hidden" name="as_qdr" value="all">
+                        <input type="submit" value="Google Advanced Search">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="side-links">
             <ul>
             <li><a href="index.html">Google Search</a></li>
             <li><a href="google_image_search.html">Google Image Search</a></li>
             </ul>
         </div>
-        
     </body>
 </html>

@@ -1,15 +1,32 @@
 div {
+  padding: 2px;
+}
+
+#searchbar {
+  position: relative;
+  left: 38px;
+}
+
+#imgsearchbar {
+  position: relative;
+  right: 12px;
+}
+
+#advsearchbutton {
+  position: relative;
+  left: 70px;
+}
+
+.side-links {
   position: absolute;
   right: 0;
   top: 0;
   margin: 15px;
 }
 
-form {
-  margin: 15px;
-  position: absolute;
-  top: 40%;
-  right: 40%;
+.square-box {
+  max-width: 600px;
+  min-height: 800px;
 }
 
 /*# sourceMappingURL=styling.css.map */
