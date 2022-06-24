@@ -10,27 +10,42 @@
         <div class="container square-box d-flex justify-content-center align-items-center" >
             <div>
                 <form action="https://google.com/search" class="justify-content-center">
-                    <div>
-                        <div>
-                            <label>All these words: </label>
-                            <input type="text" name="as_q">
+                    <div class = "floatparent">
+                        <h3>Search with the following conditions:</h3>
+                        <div class="floatchild">
+                            <div>
+                                <label>All these words: </label>
+                            </div>
+                            <div>
+                                <label>This exact word or phrase:</label>
+                            </div>
+                            <div>
+                                <label>Any of these words:</label>
+                            </div>
+                            <div>
+                                <label>None of these words:</label>
+                            </div>
                         </div>
-                        <div>
-                            <label>This exact word or phrase:</label>
-                            <input type="text" name="as_epq">
+
+                        <div class="floatchild">
+                            <div>
+                                <input type="text" name="as_q">
+                            </div>
+                            <div>
+                                <input type="text" name="as_epq">
+                            </div>
+                            <div>
+                                <input type="text" name="as_oq">
+                            </div>
+                            <div>
+                                <input type="text" name="as_eq">
+                            </div>
                         </div>
-                        <div>
-                            <label>Any of these words:</label> 
-                            <input type="text" name="as_oq">
+
+                        <div id = "advsearchbutton">
+                            <input type="hidden" name="as_qdr" value="all">
+                            <input type="submit" value="Advanced Search" id="searchbutton">
                         </div>
-                        <div>
-                            <label>None of these words:</label>
-                            <input type="text" name="as_eq">
-                        </div>
-                    </div>
-                    <div id = "advsearchbutton">
-                        <input type="hidden" name="as_qdr" value="all">
-                        <input type="submit" value="Google Advanced Search">
                     </div>
                 </form>
             </div>

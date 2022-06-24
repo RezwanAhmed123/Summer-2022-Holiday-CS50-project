@@ -12,9 +12,24 @@ div {
   right: 12px;
 }
 
-#advsearchbutton {
+.floatparent {
+  padding: 10px;
+}
+.floatparent .floatchild {
+  width: 50%;
+  float: left;
+}
+.floatparent #advsearchbutton {
   position: relative;
-  left: 70px;
+  float: right;
+  right: 75px;
+}
+.floatparent #advsearchbutton #searchbutton {
+  background-color: #3399ff;
+  color: white;
+  border: 0cm;
+  border-radius: 5px;
+  padding: 5%;
 }
 
 .side-links {

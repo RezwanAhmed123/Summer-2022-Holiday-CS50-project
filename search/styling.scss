@@ -13,10 +13,26 @@ div{
     right: 12px;
 }
 
-#advsearchbutton{
-    position: relative;
-    left: 70px;
+.floatparent{
+    padding: 10px;
+    .floatchild{
+        width: 50%;
+        float: left;
+    }
+    #advsearchbutton{
+        position: relative;
+        float: right;
+        right: 75px;
+        #searchbutton{
+            background-color: #3399ff;
+            color: white;
+            border: 0cm;
+            border-radius: 5px;
+            padding: 5%;
+        }
+    }
 }
+
 
 .side-links{
     position:absolute;
