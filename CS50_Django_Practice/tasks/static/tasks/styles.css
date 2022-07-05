@@ -1,0 +1,13 @@
+h1{
+    font-family: verdana;
+    font-size: 90px;
+    font-weight: bold;
+    margin: 12px;
+    text-decoration: underline;
+}
+
+ul{
+    font-family: verdana;
+    font-size: 70px;
+    margin: 12px;
+}

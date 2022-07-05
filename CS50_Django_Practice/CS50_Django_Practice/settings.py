@@ -41,7 +41,8 @@ INSTALLED_APPS = [
 
     #my apps
     'First_App',
-    'New_Years'
+    'New_Years',
+    'tasks'
 ]
 
 MIDDLEWARE = [
