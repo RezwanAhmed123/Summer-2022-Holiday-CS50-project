@@ -5,5 +5,18 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Page does not exist. Please create it using the button below!</h1>
+    <div class="container">
+        <h1>Page for {{ entry }} does not exist. Checkout these similar searches or create it using the button below!</h1>
+        <ul class="list-group list-group-flush">
+            {% for search_term in related_entries %}
+            <li class="list-group-item" style="font-size:larger;">
+                <a href="{% url 'encyclopedia:entry_page' entry=search_term %}"> {{search_term}} </a>
+            </li>
+            {% empty %}
+                <h2>Sorry seems like there is no similar terms!</h2>
+            {% endfor %}
+        </ul>
+
+        <a href="{% url 'encyclopedia:newpage' %}" class="btn btn-primary btn-lg btn-block">Create a new page</a>
+    </div>
 {% endblock %}
