@@ -1,0 +1,25 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    New Wiki Entry
+{% endblock %}
+
+{% block body %}
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% endif %}
+    <h1>Create new entry</h1>
+    <form action="{% url 'encyclopedia:newpage' %}" method="post" style="max-width: 1200px ;">
+        {% csrf_token %}
+        {% for item in form %}
+            <div class="form-group">
+                {{ item }}
+            </div>
+        {% endfor %}
+        <input type="submit" style="color:white; background-color: blue;">
+    </form>
+{% endblock %}
