@@ -11,7 +11,7 @@
             This is an important way to keep the django app safe from third parties trying to
             submit forged responses to our website. Imagine in context of bank website where 
             people are transferring money.-->
-        <input type="text" name="task">
+        {{ form }}
         <input type="submit">
     </form>
     <a href="{% url 'tasks:index' %}">Check list of tasks</a> 
