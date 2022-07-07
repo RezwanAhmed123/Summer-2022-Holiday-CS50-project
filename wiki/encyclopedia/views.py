@@ -1,3 +1,4 @@
+from random import randint
 from django import forms
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -12,6 +13,10 @@ class NewPageForm(forms.Form):
 
 class SearchExistingPage(forms.Form):
     search_term = forms.CharField(label="", widget=forms.TextInput(attrs={"class":"search" , "placeholder": "Search Encyclopedia"}))
+
+class EditExistingPage(forms.Form):
+    title = forms.CharField(label="",widget=forms.TextInput(attrs={"placeholder": "Name of page"}))
+    content = forms.CharField(label="", widget=forms.Textarea(attrs={"placeholder": "Current contents"}))
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -67,3 +72,32 @@ def search(request):
         return render(request, "encyclopedia/index.html", {
             "search_term": SearchExistingPage()
         })
+
+def random(request):
+    size_of_encyclopedia = len(util.list_entries())
+    random_entry = randint(0,size_of_encyclopedia)
+    chosen_entry = util.list_entries()[random_entry]
+    return entry_page(request,chosen_entry)
+
+def edit_page(request,entry):
+    if request.method == "POST":
+        edited_page_version = EditExistingPage(request.POST)
+        if edited_page_version.is_valid():
+            entry_title = edited_page_version.cleaned_data["title"]
+            entry_content = edited_page_version.cleaned_data["content"]
+            util.save_entry(entry_title,entry_content)
+            return HttpResponseRedirect(reverse("encyclopedia:entry_page", args=[entry_title]))
+        else:
+            messages.error(request,"Something went wrong please look through the entry and try again!")
+            return render(request,"encyclopedia/edit_page.html",{
+                "entry":entry,
+                "search_term": SearchExistingPage(),
+                "complete_form": edited_page_version
+            })
+    current_contents = util.get_entry(entry)
+    return render(request,"encyclopedia/edit_page.html",{
+        "entry":entry,
+        "search_term": SearchExistingPage(),
+        "complete_form": EditExistingPage(initial={"title": entry, "content":current_contents}),
+    })
+        

@@ -6,5 +6,8 @@
 {% endblock %}
 
 {% block body %}
-    {{entry_details|markdown}}
+    <div class="container">
+        {{entry_details|markdown}}
+        <a href="{% url 'encyclopedia:editpage' entry=entry_name %}" class="btn btn-primary btn-lg btn-block">Edit this page</a>
+    </div>
 {% endblock %}
