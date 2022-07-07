@@ -10,6 +10,7 @@
             <form action="{% url 'encyclopedia:editpage' entry=entry %}" method="post">
                 {% csrf_token %}
                 {{ complete_form }}
+                <input type="submit" class="btn btn-outline-primary">
             </form>
         </div>
     </h1>
