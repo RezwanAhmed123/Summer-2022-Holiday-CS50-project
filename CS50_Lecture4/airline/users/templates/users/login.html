@@ -1,0 +1,18 @@
+{% extends "users/layout.html" %}
+
+{% block body %}
+
+    {% if message %}
+        <div class="alert alert-danger" role="alert"> 
+            {{ message }}
+        </div>
+    {% endif %}
+
+    <form action="{% url 'login' %}" method="post" class="form-group">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username">
+        <input type="password" name="password" placeholder="Password">
+        <input type="submit" value="Login" class="btn btn-primary">
+    </form>
+
+{% endblock %}
