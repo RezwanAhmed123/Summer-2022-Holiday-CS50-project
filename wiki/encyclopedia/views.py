@@ -74,7 +74,7 @@ def search(request):
         })
 
 def random(request):
-    size_of_encyclopedia = len(util.list_entries())
+    size_of_encyclopedia = len(util.list_entries())-1
     random_entry = randint(0,size_of_encyclopedia)
     chosen_entry = util.list_entries()[random_entry]
     return entry_page(request,chosen_entry)
