@@ -1,0 +1,84 @@
+$border-size : 1px;
+$border-color: #80877f;
+$bgcolour:#3E3D3D;
+$heading-color: #ffe195;
+$width: 600px;
+
+body{
+    background: $bgcolour;
+}
+
+#nightmode{
+    position: absolute; //means that it is absolute from the sides of the page
+    top: 10px;
+    right: 10px;
+    border: 2px solid orange;
+    border-radius: 25px;
+    padding: 10px;
+    background-color: $bgcolour;
+    color: antiquewhite;
+}
+
+.wrapper{
+    display: grid;
+    grid-template-columns: 33% 34% 33%;
+
+    div{
+        align-items: center;
+        color: antiquewhite;
+        padding: 20px;
+
+        img{
+            width: 95%;
+        }
+
+        ol{
+            .list-headings{
+                font-weight: bold;
+                text-decoration-line: underline;
+                color: aqua;
+            }
+            font-size: large;
+            ul{
+                font-size: medium;
+            }
+        }
+    
+        #tableHead{
+            font-weight: bold;
+        }    
+    
+        table{
+            border: $border-size solid $border-color;
+            text-align: center;
+            font-family: Georgia, sans-serif;
+            border-collapse: collapse;
+            margin: 10px;
+        
+            th{
+                padding: 5px;
+                font-weight: bold;
+                font-size: large;
+                border: $border-size solid $border-color;
+                color: $heading-color;
+            }
+        
+            td{
+                padding: 5px;
+                font-size: medium;
+                border: $border-size solid $border-color;
+                color: orange;
+                a{
+                    color: #99cc00;
+                }
+            }
+        }
+    }
+}
+
+h1{
+    font-size: larger;
+    font-family: Helvetica, sans-serif;
+    text-align: center;
+    color: $heading-color;
+}

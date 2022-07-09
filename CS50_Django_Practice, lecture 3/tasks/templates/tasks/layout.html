@@ -1,0 +1,19 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'tasks/styles.css' %}">
+    <title>Tasks</title>
+</head>
+<body>
+    {% block body %}
+    {% endblock %}
+</body>
+</html>
+
+<!--this page allows you to create a single page of html so that the body of the similar html pages do not have repetition and you only need to change the code one time for all the changes to be extended to all pages-->

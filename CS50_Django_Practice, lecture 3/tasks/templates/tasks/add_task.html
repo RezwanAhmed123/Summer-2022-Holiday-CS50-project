@@ -1,0 +1,18 @@
+{% extends "tasks/layout.html" %} <!--this is called layout inheritence, look in index.html and layout.html for further explanation-->
+
+{% block body %}
+    <h1>Add a task</h1>
+    <form action="{% url 'tasks:add_task' %}" method="post"> <!--anytime you want to submit data that has the potential to change some state inside the application,
+                                                                 eg change list of tasks, you use the method called post, doesnt include parameters inside the url 
+                                                                 unlike the "get" method. The get method is implicitly stated for most requests (you want to get a 
+                                                                 specific page/information)-->
+        {% csrf_token %}
+        <!--The above is a way to prevent cross-site request forgery verification failed error.
+            This is an important way to keep the django app safe from third parties trying to
+            submit forged responses to our website. Imagine in context of bank website where 
+            people are transferring money.-->
+        {{ form }}
+        <input type="submit">
+    </form>
+    <a href="{% url 'tasks:index' %}">Check list of tasks</a> 
+{% endblock %}

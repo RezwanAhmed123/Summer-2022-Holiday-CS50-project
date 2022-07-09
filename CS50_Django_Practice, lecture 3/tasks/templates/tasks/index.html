@@ -1,0 +1,15 @@
+{% extends "tasks/layout.html" %} <!-- this is to say import all the code from the specified file-->
+
+{% block body %} <!--to say what else is going to be different for this specific html page-->
+    <h1>Tasks to be completed</h1>
+    <ul>
+        {% for task in tasks %}
+            <li> {{ task }} </li>
+        
+        {% empty %} <!--This applies when the for loop does not run at all-->
+            <li>No tasks yet. Please add.</li>
+        
+        {% endfor %}
+    </ul>
+    <a href="{% url 'tasks:add_task' %}">Add new task</a>
+{% endblock %}
