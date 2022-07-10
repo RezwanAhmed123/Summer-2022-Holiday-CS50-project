@@ -1,0 +1,23 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+
+    {% for item in listings %}
+    <ul>
+        <li>
+            {% if item.active %}
+            Item {{item.id}}: {{item.title}}
+            Seller: {{ item.seller.username}}
+            Starting price: {{ item.listing_start_price }}
+            {% endif %}
+        </li>
+    {% empty %}
+    <h2>No current listings</h2>
+    {% endfor %}
+    </ul>
+        
+    <div>
+        <a href="{% url 'newlisting' %}" class="btn btn-primary">Click here to create a new listing</a>
+    </div>
+{% endblock %}
