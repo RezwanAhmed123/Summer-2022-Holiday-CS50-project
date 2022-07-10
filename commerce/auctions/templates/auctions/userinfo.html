@@ -2,6 +2,11 @@
 
 {% block body %}
     <h2>{{ user.username }}</h2>
+
+    {% if is_current_user %}
+    <a href="{% url 'editmyinfo' %}" class="btn btn-success">Edit my account information</a>
+    {% endif %}
+
     <h2>Current Listings</h2>
     <ul>
         {% for item in user_selling_items %}

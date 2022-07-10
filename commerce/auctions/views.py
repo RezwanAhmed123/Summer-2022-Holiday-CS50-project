@@ -1,6 +1,8 @@
+from attr import fields
 from django import forms
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserChangeForm
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -9,6 +11,11 @@ from django.urls import reverse
 from .models import Bids, Listings, User
 
 #forms
+class EditMyInfo(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ['username','email','first_name','last_name', 'password']
+
 class NewListingForm(forms.ModelForm):
     class Meta:
         model = Listings
@@ -85,10 +92,30 @@ def user_info(request, user_id):
     user = User.objects.get(pk=user_id)
     user_bids = user.bids_made.all()
     user_selling_items = user.selling_items.all()
-    return render(request, "auctions/userinfo.html",{
+    context = {
         "user":user,
         "user_bids": user_bids,
         "user_selling_items": user_selling_items
+    }
+    is_current_user = False
+    if request.user == user:
+        is_current_user = True
+        context["is_current_user"] = True
+    return render(request, "auctions/userinfo.html", context)
+
+def edit_myinfo(request):
+    if request.method == "POST":
+        editform = EditMyInfo(request.POST, instance=request.user)
+        if editform.is_valid():
+            editform.save()
+            return HttpResponseRedirect(reverse("userinfo", args=(request.user.id,)))
+        else:
+            return render(request,"auctions/edit_myinfo.html",{
+                "editform":editform
+            })
+    user = request.user
+    return render(request, "auctions/edit_myinfo.html",{
+        "editform": EditMyInfo(instance = user)
     })
 
 @login_required
