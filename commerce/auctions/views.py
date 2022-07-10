@@ -1,8 +1,7 @@
-from attr import fields
 from django import forms
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserChangeForm
+from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -12,6 +11,9 @@ from .models import Bids, Listings, User
 
 #forms
 class EditMyInfo(UserChangeForm):
+    def __init__(self, *args, **kwargs):
+        super(EditMyInfo, self).__init__(*args, **kwargs)
+        self.fields['password'].widget = forms.HiddenInput()
     class Meta:
         model = User
         fields = ['username','email','first_name','last_name', 'password']
@@ -103,6 +105,7 @@ def user_info(request, user_id):
         context["is_current_user"] = True
     return render(request, "auctions/userinfo.html", context)
 
+@login_required
 def edit_myinfo(request):
     if request.method == "POST":
         editform = EditMyInfo(request.POST, instance=request.user)
@@ -116,6 +119,23 @@ def edit_myinfo(request):
     user = request.user
     return render(request, "auctions/edit_myinfo.html",{
         "editform": EditMyInfo(instance = user)
+    })
+
+@login_required
+def changepassword(request):
+    if request.method == "POST":
+        password_form = PasswordChangeForm(data=request.POST, user=request.user)
+        if password_form.is_valid():
+            password_form.save()
+            update_session_auth_hash(request, password_form.user)
+            return HttpResponseRedirect(reverse("userinfo", args=(request.user.id,)))
+        else:
+            return render(request,"auctions/changepassword.html",{
+                "password_form":password_form
+            })
+    user = request.user
+    return render(request, "auctions/changepassword.html",{
+        "password_form": PasswordChangeForm(user=user)
     })
 
 @login_required
