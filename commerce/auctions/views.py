@@ -104,6 +104,11 @@ def listing(request, item_id):
     if request.method == "POST":
         return bidding(request,item_id)
     item = Listings.objects.get(pk=item_id)
+    item_bids = [bid.get_bid_price() for bid in item.bids_for_item.all()]
+    if item_bids:
+        current_highest_bid = max(item_bids)
+    item.current_price = current_highest_bid
+    item.save()
     return render(request, "auctions/listing.html",{
         "listing": item,
         "bidding": NewBidForm()
@@ -116,9 +121,14 @@ def bidding(request,item_id):
         if bidform.is_valid():
             madebid = bidform.save(commit=False)
             item = Listings.objects.get(pk=item_id)
+            item_bids = [bid.get_bid_price() for bid in item.bids_for_item.all()]
+            if item_bids:
+                current_highest_bid = max(item_bids)
+            else:
+                current_highest_bid = 0
             madebid.set_item(item)
             user = request.user
-            if madebid.accept_bid(item):
+            if madebid.accept_bid(current_highest_bid):
                 madebid.set_bidder(user)
                 item.current_price = madebid.get_bid_price()
                 madebid.save()

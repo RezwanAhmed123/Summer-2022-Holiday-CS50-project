@@ -28,8 +28,8 @@ class Listings(models.Model):
         self.active = False
 
 class Bids(models.Model):
-    item = models.ForeignKey(Listings, on_delete=models.CASCADE, null=True, related_name="bid_for_item")
-    bidder = models.ForeignKey(User,on_delete=models.CASCADE, null=True, related_name="bid_made")
+    item = models.ForeignKey(Listings, on_delete=models.CASCADE, null=True, related_name="bids_for_item")
+    bidder = models.ForeignKey(User,on_delete=models.CASCADE, null=True, related_name="bids_made")
     bid_price = models.DecimalField(decimal_places=2,max_digits=10)
     
     def __str__(self) -> str:
@@ -44,8 +44,9 @@ class Bids(models.Model):
     def get_bid_price(self):
         return self.bid_price
 
-    def accept_bid(self, item):
-        if (item.listing_start_price < self.bid_price) and (item.current_price<self.bid_price):
+    def accept_bid(self, price):
+        item_start_price = self.item.listing_start_price
+        if max(item_start_price,price) < self.bid_price:
             return True
         else:
             return False
