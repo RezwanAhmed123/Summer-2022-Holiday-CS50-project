@@ -1,0 +1,33 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{ user.username }}</h2>
+    <h2>Current Listings</h2>
+    <ul>
+        {% for item in user_selling_items %}
+        <li>
+            Item: <a href="{% url 'listing' item.id %}">{{item.title}}</a>
+            Current price: {{ item.current_price }}
+        </li>
+        {% empty %}
+        <h2>Seller not currently selling anything!</h2>
+        {% endfor %}
+    </ul>
+
+    <h2>Current bids</h2>
+    <ul>
+        {% for bid in user_bids %}
+        <li>
+            Item: <a href="{% url 'listing' bid.item.id %}">{{bid.item.title}}</a>
+            Bid price: {{ bid.bid_price }}
+        </li>
+        {% empty %}
+        <h2>No current bids from user</h2>
+        {% endfor %}
+    </ul>
+
+    <h2>Watchlist</h2>
+    <ul>
+        
+    </ul>
+{% endblock %}

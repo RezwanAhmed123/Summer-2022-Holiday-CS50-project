@@ -11,7 +11,7 @@ class Listings(models.Model):
     image = models.URLField(blank=True)
     listing_start_price = models.DecimalField(decimal_places=2,max_digits=10)
     current_price = models.DecimalField(default=0,decimal_places=2,max_digits=10)
-    seller = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="seller")
+    seller = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="selling_items")
     watchers = models.ManyToManyField(User, blank=True, related_name="current_watchers")
     active = True
 

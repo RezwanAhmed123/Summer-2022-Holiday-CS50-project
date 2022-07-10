@@ -81,6 +81,17 @@ def register(request):
         return render(request, "auctions/register.html")
 
 @login_required
+def user_info(request, user_id):
+    user = User.objects.get(pk=user_id)
+    user_bids = user.bids_made.all()
+    user_selling_items = user.selling_items.all()
+    return render(request, "auctions/userinfo.html",{
+        "user":user,
+        "user_bids": user_bids,
+        "user_selling_items": user_selling_items
+    })
+
+@login_required
 def new_listing(request):
     if request.method == "POST":
         new_listing_form = NewListingForm(request.POST)
@@ -133,15 +144,18 @@ def bidding(request,item_id):
                 item.current_price = madebid.get_bid_price()
                 madebid.save()
                 item.save()
+                message = "Congrats! Your bid is successful and you are the current bidder!"
                 return render(request, "auctions/listing.html", {
                     "listing":item,
-                    "bidding": NewBidForm()
+                    "bidding": NewBidForm(),
+                    "message": message
                 })
             else:
+                message = f"You need a higher bid! The current highest bid is ${current_highest_bid}!"
                 return render(request, "auctions/listing.html",{
                 "listing": item,
                 "bidding": bidform,
-                "message": "You need a higher bid!",
+                "message": message,
                 "item_price": item.current_price
             })
         

@@ -3,12 +3,12 @@
 {% block body %}
     <h2>Active Listings</h2>
 
-    <ul></ul>
+    <ul>
     {% for item in listings %}
         <li>
             {% if item.active %}
             Item: <a href="{% url 'listing' item.id %}">{{item.title}}</a>
-            Seller: {{ item.seller.username}}
+            Seller: <a href="{% url 'userinfo' item.seller.id %}">{{ item.seller.username }}</a>
             Starting price: {{ item.listing_start_price }}
             {% endif %}
         </li>
@@ -16,7 +16,6 @@
     <h2>No current listings</h2>
     {% endfor %}
     </ul>
-        
     <div>
         <a href="{% url 'newlisting' %}" class="btn btn-primary">Click here to create a new listing</a>
     </div>
