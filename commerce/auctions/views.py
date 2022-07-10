@@ -123,7 +123,10 @@ def bidding(request,item_id):
                 item.current_price = madebid.get_bid_price()
                 madebid.save()
                 item.save()
-                return HttpResponseRedirect(reverse("listing", args=(item_id,)))
+                return render(request, "auctions/listing.html", {
+                    "listing":item,
+                    "bidding": NewBidForm()
+                })
             else:
                 return render(request, "auctions/listing.html",{
                 "listing": item,
