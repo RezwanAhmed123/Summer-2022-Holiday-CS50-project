@@ -30,13 +30,14 @@
     </div>
 
     <div>
-        <form action="{% url 'bidding' listing.id %}" method="post">
+        <form action="{% url 'listing' listing.id %}" method="post">
             {% csrf_token %}
             {{ bidding }}
             <input type="submit" class="btn btn-success">
         </form>
         {% if message %}
             {{ message }}
+            The current highest bid is {{ item_price }}
         {% endif %}
     </div>
 

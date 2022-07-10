@@ -9,8 +9,8 @@ class Listings(models.Model):
     title = models.CharField(max_length=128)
     description = models.TextField(max_length=500)
     image = models.URLField(blank=True)
-    listing_start_price = models.DecimalField(max_digits=10,decimal_places=2)
-    current_price = models.IntegerField(null=True)
+    listing_start_price = models.IntegerField()
+    current_price = models.IntegerField(default=0)
     seller = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="seller")
     watchers = models.ManyToManyField(User, blank=True, related_name="current_watchers")
     active = True
@@ -30,7 +30,7 @@ class Listings(models.Model):
 class Bids(models.Model):
     item = models.ForeignKey(Listings, on_delete=models.CASCADE, null=True, related_name="bid_for_item")
     bidder = models.ForeignKey(User,on_delete=models.CASCADE, null=True, related_name="bid_made")
-    bid_price = models.DecimalField(max_digits=10,decimal_places=2)
+    bid_price = models.IntegerField()
     
     def __str__(self) -> str:
         return f'{self.item} bid'
@@ -41,8 +41,11 @@ class Bids(models.Model):
     def set_item(self,item):
         self.item = item
 
-    def accept_bid(self):
-        if (self.item.listing_start_price < self.bid_price):
+    def get_bid_price(self):
+        return int(self.bid_price)
+
+    def accept_bid(self, item):
+        if (item.listing_start_price < self.bid_price) and (item.current_price<self.bid_price):
             return True
         else:
             return False

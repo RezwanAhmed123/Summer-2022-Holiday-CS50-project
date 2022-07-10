@@ -21,8 +21,9 @@ class NewBidForm(forms.ModelForm):
     
 
 #views
-@login_required(login_url="auctions/login.html")
 def index(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
     return render(request, "auctions/index.html",{
         "listings": Listings.objects.all()
     })
@@ -79,7 +80,7 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-@login_required(login_url="auctions/login.html")
+@login_required
 def new_listing(request):
     if request.method == "POST":
         new_listing_form = NewListingForm(request.POST)
@@ -98,15 +99,17 @@ def new_listing(request):
         "form": NewListingForm()
     })
 
-@login_required(login_url="auctions/login.html")
+@login_required
 def listing(request, item_id):
+    if request.method == "POST":
+        return bidding(request,item_id)
     item = Listings.objects.get(pk=item_id)
     return render(request, "auctions/listing.html",{
         "listing": item,
         "bidding": NewBidForm()
     })
 
-@login_required(login_url="auctions/login.html")
+@login_required
 def bidding(request,item_id):
     if request.method == "POST":
         bidform = NewBidForm(request.POST)
@@ -115,12 +118,17 @@ def bidding(request,item_id):
             item = Listings.objects.get(pk=item_id)
             madebid.set_item(item)
             user = request.user
-            if madebid.accept_bid():
+            if madebid.accept_bid(item):
                 madebid.set_bidder(user)
-                item.set_price(madebid.bid_price)
+                item.current_price = madebid.get_bid_price()
                 madebid.save()
+                item.save()
                 return HttpResponseRedirect(reverse("listing", args=(item_id,)))
-        return render(request, "auctions/listing.html",{
-            "form": bidform,
-            "message": "Error!"
-        })
+            else:
+                return render(request, "auctions/listing.html",{
+                "listing": item,
+                "bidding": bidform,
+                "message": "You need a higher bid!",
+                "item_price": item.current_price
+            })
+        
