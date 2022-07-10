@@ -1,21 +1,45 @@
 {% extends "auctions/layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block body %}
-<h2> Item {{ listing.id }}: {{ listing.title }} </h2>
-
-<div>
-    price: ${{ listing.listing_start_price }}
-</div>
+<div class="container-fluid">
+    <h2> Item: {{ listing.title }} </h2>
+    <div>
+        Seller: {{ listing.seller.username }}
+    </div>
     
-<div>
-    Description: {{ listing.description }}
+    <div>
+        Description: {{ listing.description }}
+    </div>
+    
+    <div>
+        {% if listing.image %}
+        <img src="{{ listing.image }}" alt="{{ listing.title }}" class="img-thumbnail" width="500", height="500">
+    
+        {% else %}
+            <h2>No image for this item</h2>
+        {% endif %}
+    </div>
+    
+    <div>
+        {% if item.currentprice %}
+        Current Price: ${{ listing.current_price }}
+        {% else %}
+        Starting price: ${{ listing.listing_start_price }}
+        {% endif %}
+    </div>
+
+    <div>
+        <form action="{% url 'bidding' listing.id %}" method="post">
+            {% csrf_token %}
+            {{ bidding }}
+            <input type="submit" class="btn btn-success">
+        </form>
+        {% if message %}
+            {{ message }}
+        {% endif %}
+    </div>
+
 </div>
-{% if listing.image %}
-    <img src="{{ listing.image }}" alt="no image">
-
-{% else %}
-    <h2>No image for this item</h2>
-
-{% endif %}
 
 {% endblock %}

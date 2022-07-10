@@ -6,14 +6,19 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import Listings, User
+from .models import Bids, Listings, User
 
 #forms
-class NewListingForm(forms.Form):
-    title = forms.CharField(label="",widget=forms.TextInput(attrs={"placeholder":"Name of item"}))
-    description = forms.CharField(label="", widget=forms.Textarea(attrs={"placeholder": "Please provide a short description of the item here"}))
-    image = forms.URLField(required=False)
-    listing_start_price = forms.FloatField(help_text="Input starting price")
+class NewListingForm(forms.ModelForm):
+    class Meta:
+        model = Listings
+        fields = ['title', 'description', 'image', 'listing_start_price']
+
+class NewBidForm(forms.ModelForm):
+    class Meta:
+        model = Bids
+        fields = ['bid_price']
+    
 
 #views
 @login_required(login_url="auctions/login.html")
@@ -79,16 +84,11 @@ def new_listing(request):
     if request.method == "POST":
         new_listing_form = NewListingForm(request.POST)
         if new_listing_form.is_valid():
-            new_listing = Listings()
-            new_listing.title = new_listing_form.cleaned_data["title"]
-            new_listing.description = new_listing_form.cleaned_data["description"]
-            new_listing.image = new_listing_form.cleaned_data["image"]
-            new_listing.listing_start_price = new_listing_form.cleaned_data["listing_start_price"]
+            new_listing = new_listing_form.save(commit=False)
             user = request.user
-            new_listing.seller = user.id
+            new_listing.set_seller(user)
             new_listing.save()
-            new_listing_id = new_listing.id
-            return HttpResponseRedirect(reverse("listing"), args=(new_listing_id))
+            return HttpResponseRedirect(reverse("listing", args=(new_listing.id,)))
         else:
             return render(request, "auctions/newlisting.html",{
                 "form": new_listing_form,
@@ -102,5 +102,25 @@ def new_listing(request):
 def listing(request, item_id):
     item = Listings.objects.get(pk=item_id)
     return render(request, "auctions/listing.html",{
-        "listing": item
+        "listing": item,
+        "bidding": NewBidForm()
     })
+
+@login_required(login_url="auctions/login.html")
+def bidding(request,item_id):
+    if request.method == "POST":
+        bidform = NewBidForm(request.POST)
+        if bidform.is_valid():
+            madebid = bidform.save(commit=False)
+            item = Listings.objects.get(pk=item_id)
+            madebid.set_item(item)
+            user = request.user
+            if madebid.accept_bid():
+                madebid.set_bidder(user)
+                item.set_price(madebid.bid_price)
+                madebid.save()
+                return HttpResponseRedirect(reverse("listing", args=(item_id,)))
+        return render(request, "auctions/listing.html",{
+            "form": bidform,
+            "message": "Error!"
+        })
