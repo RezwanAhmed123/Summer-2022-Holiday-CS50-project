@@ -11,7 +11,7 @@
     <ul>
         {% for item in user_selling_items %}
         <li>
-            Item: <a href="{% url 'listing' item.id %}">{{item.title}}</a>
+            Item: <a href="{% url 'listing' item.id %}">{{item.title}}</a>,
             Current price: {{ item.current_price }}
         </li>
         {% empty %}
@@ -23,8 +23,8 @@
     <ul>
         {% for bid in user_bids %}
         <li>
-            Item: <a href="{% url 'listing' bid.item.id %}">{{bid.item.title}}</a>
-            Bid price: {{ bid.bid_price }}
+            Item: <a href="{% url 'listing' bid.item.id %}">{{bid.item.title}}</a>,
+            Your last bid price: {{ bid.bid_price }}
         </li>
         {% empty %}
         <h2>No current bids from user</h2>

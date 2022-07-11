@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import Bids, Listings, User
+from . import utils
 
 #forms
 class EditMyInfo(UserChangeForm):
@@ -92,17 +93,21 @@ def register(request):
 @login_required
 def user_info(request, user_id):
     user = User.objects.get(pk=user_id)
-    user_bids = user.bids_made.all()
+    user_bids = user.bids_made.all().order_by('-bid_price')
+    temp_data = []
+    temp_bids = []
+    for bid in user_bids:
+        if bid.item not in temp_data:
+            temp_data.append(bid.item)
+            temp_bids.append(bid)
+    user_bids = temp_bids
     user_selling_items = user.selling_items.all()
     context = {
         "user":user,
         "user_bids": user_bids,
         "user_selling_items": user_selling_items
     }
-    is_current_user = False
-    if request.user == user:
-        is_current_user = True
-        context["is_current_user"] = True
+    context = utils.is_current_user(request,user,context)
     return render(request, "auctions/userinfo.html", context)
 
 @login_required
@@ -165,6 +170,8 @@ def listing(request, item_id):
     item_bids = [bid.get_bid_price() for bid in item.bids_for_item.all()]
     if item_bids:
         current_highest_bid = max(item_bids)
+    else:
+        current_highest_bid = 0
     item.current_price = current_highest_bid
     item.save()
     return render(request, "auctions/listing.html",{
@@ -179,16 +186,21 @@ def bidding(request,item_id):
         if bidform.is_valid():
             madebid = bidform.save(commit=False)
             item = Listings.objects.get(pk=item_id)
-            item_bids = [bid.get_bid_price() for bid in item.bids_for_item.all()]
-            if item_bids:
-                current_highest_bid = max(item_bids)
-            else:
-                current_highest_bid = 0
-            madebid.set_item(item)
             user = request.user
-            if madebid.accept_bid(current_highest_bid):
+            madebid.set_item(item)
+            if len(item.past_bidders.all()) > 0:
+                item.current_bidder = item.set_highest_bidder()
+                current_highest_bid = item.bids_for_item.objects.filter(item=item, bidder=item.current_bidder)
+                current_bid_price = current_highest_bid.bid_price
+                item.current_price = item.set_price(current_bid_price)
+            else:
+                item.current_bidder = None
+                current_bid_price = 0
+            if madebid.accept_bid(current_bid_price):
                 madebid.set_bidder(user)
                 item.current_price = madebid.get_bid_price()
+                item.current_bidder = madebid.bidder
+                item.past_bidders.add(item.current_bidder)
                 madebid.save()
                 item.save()
                 message = "Congrats! Your bid is successful and you are the current bidder!"
@@ -198,7 +210,7 @@ def bidding(request,item_id):
                     "message": message
                 })
             else:
-                message = f"You need a higher bid! The current highest bid is ${current_highest_bid}!"
+                message = f"You need a higher bid! The current highest bid is ${current_bid_price}!"
                 return render(request, "auctions/listing.html",{
                 "listing": item,
                 "bidding": bidform,
