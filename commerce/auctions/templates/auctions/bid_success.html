@@ -28,22 +28,12 @@
         {% endif %}
     </div>
 
-    <div>
+    <div class="alert alert-success" role="alert">
         Current number of bids: {{ number_of_bids }}.
-        {% if is_winning %}
-        Congrats, you currently the highest bidder!
-        {% else %}
-        <form action="{% url 'bidsuccess' listing.id %}" method="post">
-            {% csrf_token %}
-            {{ bidding }}
-            <input type="submit" class="btn btn-success">
-        </form>
-        {% endif %}
-
-        {% if message %}
-            {{ message }}
-        {% endif %}
+        Congrats, your bid was successful!
     </div>
+
+    <a href="{% url 'listing' listing.id %}" class="btn btn-success">Back to listing page</a>
 
 </div>
 

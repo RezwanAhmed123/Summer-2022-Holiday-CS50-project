@@ -167,25 +167,35 @@ def listing(request, item_id):
     if request.method == "POST":
         return bidding(request,item_id)
     item = Listings.objects.get(pk=item_id)
-    item_bids = [bid.get_bid_price() for bid in item.bids_for_item.all()]
-    if item_bids:
-        current_highest_bid = max(item_bids)
+    item_bids = item.bids_for_item.all()
+    if not item_bids:
+        item.past_bidders.set([])
+    item_bid_prices = [bid.get_bid_price() for bid in item_bids]
+    if item_bid_prices:
+        current_highest_bid = max(item_bid_prices)
+        item.current_bidder = item.bids_for_item.get(bid_price=current_highest_bid).bidder
     else:
         current_highest_bid = 0
+        item.current_bidder = None
     item.current_price = current_highest_bid
     item.save()
+    is_winning = (item.current_bidder == request.user)
+    number_of_bids = utils.get_number_of_unique_bidders(item.past_bidders.all())
     return render(request, "auctions/listing.html",{
         "listing": item,
-        "bidding": NewBidForm()
+        "bidding": NewBidForm(),
+        "is_winning": is_winning,
+        "number_of_bids": number_of_bids
     })
 
 @login_required
 def bidding(request,item_id):
+    item = Listings.objects.get(pk=item_id)
+    number_of_bids = utils.get_number_of_unique_bidders(item.past_bidders.all())
     if request.method == "POST":
         bidform = NewBidForm(request.POST)
         if bidform.is_valid():
             madebid = bidform.save(commit=False)
-            item = Listings.objects.get(pk=item_id)
             user = request.user
             madebid.set_item(item)
             if len(item.past_bidders.all()) > 0:
@@ -204,9 +214,11 @@ def bidding(request,item_id):
                 madebid.save()
                 item.save()
                 message = "Congrats! Your bid is successful and you are the current bidder!"
-                return render(request, "auctions/listing.html", {
+                number_of_bids += 1
+                return render(request, "auctions/bid_success.html", {
                     "listing":item,
                     "bidding": NewBidForm(),
+                    "number_of_bids": number_of_bids,
                     "message": message
                 })
             else:
@@ -217,4 +229,12 @@ def bidding(request,item_id):
                 "message": message,
                 "item_price": item.current_price
             })
-        
+    item.current_price = current_highest_bid
+    item.save()
+    is_winning = (item.current_bidder == request.user)
+    return render(request, "auctions/bid_success.html",{
+        "listing": item,
+        "bidding": NewBidForm(),
+        "is_winning": is_winning,
+        "number_of_bids": number_of_bids
+    })
