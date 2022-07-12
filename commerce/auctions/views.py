@@ -168,8 +168,7 @@ def listing(request, item_id):
         return bidding(request,item_id)
     item = Listings.objects.get(pk=item_id)
     item_bids = item.bids_for_item.all()
-    if not item_bids:
-        item.past_bidders.set([])
+    utils.update_past_bidders(item, item_bids)
     item_bid_prices = [bid.get_bid_price() for bid in item_bids]
     if item_bid_prices:
         current_highest_bid = max(item_bid_prices)

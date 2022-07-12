@@ -17,3 +17,13 @@ def get_unique_bidders(bidder_list):
         if bidder not in unique_bidders:
             unique_bidders.append(bidder.id)
     return unique_bidders
+
+def update_past_bidders(item, bid_list):
+    if item.past_bidders:
+        item.past_bidders.set([])
+        for bid in bid_list:
+            bidder = bid.bidder
+            item.past_bidders.add(bidder)
+    else:
+        item.past_bidders.set([])
+    
