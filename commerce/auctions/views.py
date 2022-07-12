@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import Bids, Listings, User
+from .models import Bids, Listings, User, Comments
 from . import utils
 
 #forms
@@ -24,11 +24,20 @@ class NewListingForm(forms.ModelForm):
         model = Listings
         fields = ['title', 'description', 'image', 'listing_start_price']
 
+class EditListingForm(forms.ModelForm):
+    class Meta:
+        model = Listings
+        fields = ['title', 'description', 'image', 'active']
+
 class NewBidForm(forms.ModelForm):
     class Meta:
         model = Bids
         fields = ['bid_price']
-    
+
+class NewCommentForm(forms.ModelForm):
+    class Meta:
+        model = Comments
+        fields = ['comment']
 
 #views
 def index(request):
@@ -179,12 +188,18 @@ def listing(request, item_id):
     item.current_price = current_highest_bid
     item.save()
     is_winning = (item.current_bidder == request.user)
+    is_seller = (item.seller == request.user)
+    item_active = item.active
     number_of_bids = utils.get_number_of_unique_bidders(item.past_bidders.all())
+    comments = item.item_comments.all()
     return render(request, "auctions/listing.html",{
         "listing": item,
         "bidding": NewBidForm(),
         "is_winning": is_winning,
-        "number_of_bids": number_of_bids
+        "is_seller": is_seller,
+        "number_of_bids": number_of_bids,
+        "comments": comments,
+        "item_active": item_active
     })
 
 @login_required
@@ -214,7 +229,7 @@ def bidding(request,item_id):
                 item.save()
                 message = "Congrats! Your bid is successful and you are the current bidder!"
                 number_of_bids += 1
-                return render(request, "auctions/bid_success.html", {
+                return render(request, "auctions/bid_status.html", {
                     "listing":item,
                     "bidding": NewBidForm(),
                     "number_of_bids": number_of_bids,
@@ -222,20 +237,61 @@ def bidding(request,item_id):
                 })
             else:
                 current_min_bid = max(item.listing_start_price,current_bid_price)
+                comments = item.item_comments.all()
                 message = f"You need a higher bid! The current minimum bid is ${current_min_bid}!"
                 return render(request, "auctions/listing.html",{
                 "listing": item,
                 "bidding": bidform,
                 "message": message,
                 "number_of_bids": number_of_bids,
-                "item_price": item.current_price
+                "item_price": item.current_price,
+                "comments": comments
             })
     item.current_price = current_highest_bid
     item.save()
     is_winning = (item.current_bidder == request.user)
-    return render(request, "auctions/bid_success.html",{
+    return render(request, "auctions/bid_status.html",{
         "listing": item,
         "bidding": NewBidForm(),
         "is_winning": is_winning,
         "number_of_bids": number_of_bids
+    })
+
+@login_required
+def edit_listing(request, item_id):
+    item = Listings.objects.get(pk=item_id)
+    if request.method == "POST":
+        listing_form = EditListingForm(request.POST, instance=item)
+        if listing_form.is_valid():
+            listing_form.save()
+            return HttpResponseRedirect(reverse("listing", args=(item_id,)))
+        else:
+            return render(request, "auctions/edit_listing.html", {
+                "listing_form": listing_form,
+                "item": item
+            })
+    return render(request, "auctions/edit_listing.html", {
+                "listing_form": EditListingForm(instance=item),
+                "item": item
+                })
+
+@login_required
+def add_comment(request,item_id):
+    item = Listings.objects.get(pk=item_id)
+    if request.method == "POST":
+        comment_form = NewCommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.set_commenter(request.user)
+            comment.set_item(item)
+            comment.save()
+            return HttpResponseRedirect(reverse("listing", args=(item.id,)))
+        else:
+            return render(request, "auctions/add_comment.html",{
+                "item": item,
+                "comment_form": comment_form
+            })
+    return render(request, "auctions/add_comment.html",{
+        "item": item,
+        "comment_form": NewCommentForm()
     })

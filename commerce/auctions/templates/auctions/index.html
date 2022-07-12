@@ -1,22 +1,36 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
-
-    <ul>
-    {% for item in listings %}
-        <li>
-            {% if item.active %}
-            Item: <a href="{% url 'listing' item.id %}">{{item.title}}</a>
-            Seller: <a href="{% url 'userinfo' item.seller.id %}">{{ item.seller.username }}</a>
-            Starting price: {{ item.listing_start_price }}
-            {% endif %}
-        </li>
-    {% empty %}
-    <h2>No current listings</h2>
-    {% endfor %}
-    </ul>
     <div>
         <a href="{% url 'newlisting' %}" class="btn btn-primary">Click here to create a new listing</a>
     </div>
+    <h2>Active Listings</h2>
+    <ul>
+    {% for item in listings %}
+        {% if item.active %}
+        <li>
+            Item: <a href="{% url 'listing' item.id %}">{{item.title}}</a>
+            Seller: <a href="{% url 'userinfo' item.seller.id %}">{{ item.seller.username }}</a>
+            Starting price: {{ item.listing_start_price }}
+        </li>   
+        {% endif %}
+    {% endfor %}
+    </ul>
+
+    <h2>Finished Listings</h2>
+    <ul>
+        {% for item in listings %}
+            {% if item.active == False %}
+            <li>
+                Item: <a href="{% url 'listing' item.id %}">{{item.title}}</a>
+                Seller: <a href="{% url 'userinfo' item.seller.id %}">{{ item.seller.username }}</a>
+                {% if item.current_bidder %}
+                Winner: <a href="{% url 'userinfo' item.current_bidder.id %}">{{ item.current_bidder.username }}</a>
+                {% else %}
+                Taken down before it was sold.
+                {% endif %}
+            </li>   
+            {% endif %}
+        {% endfor %}
+        </ul>
 {% endblock %}

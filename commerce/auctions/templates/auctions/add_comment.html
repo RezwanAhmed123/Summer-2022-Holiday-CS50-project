@@ -1,0 +1,14 @@
+{% extends "auctions/layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+<div class="container-fluid">
+    <h2> Item: {{ item.title }} </h2>
+    <form action="{% url 'newcomment' item.id %}" method="post">
+        {% csrf_token %}
+        {{ comment_form|crispy }}
+        <input type="submit" class="btn btn-primary">
+    </form>
+</div>
+
+{% endblock %}

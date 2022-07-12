@@ -31,9 +31,14 @@
     <div>
         Current number of bids: {{ number_of_bids }}.
         {% if is_winning %}
-        Congrats, you currently the highest bidder!
+        Congrats, you are currently the highest bidder!
+        {% elif is_seller %}
+        You are the seller.
+        <a href="{% url 'editlisting' listing.id %}" class="btn btn-primary">Close/Edit your listing</a>
+        {% elif listing.active == False %}
+        The bidding has ended. The winner is {{ listing.current_bidder }}
         {% else %}
-        <form action="{% url 'bidsuccess' listing.id %}" method="post">
+        <form action="{% url 'bidstatus' listing.id %}" method="post">
             {% csrf_token %}
             {{ bidding }}
             <input type="submit" class="btn btn-success">
@@ -43,6 +48,25 @@
         {% if message %}
             {{ message }}
         {% endif %}
+    </div>
+
+    <div>
+        <div class="mx-auto" style="width: 300px;">
+            <h2>Comment Section</h2>
+        </div>
+            <a href="{% url 'addcomment' listing.id %}" class="btn btn-primary">Add a comment</a>
+
+        <div class="d-grid gap-3">
+            {% for comment in comments %}
+            <div class="p-2 bg-light border">
+                <a href="{% url 'userinfo' comment.commenter.id %}">{{ comment.commenter.username }}:</a>
+                {{ comment.comment }}
+            </div>
+        {% empty %}
+        </div>
+
+        <h3>No comments yet.</h3>
+        {% endfor %}
     </div>
 
 </div>

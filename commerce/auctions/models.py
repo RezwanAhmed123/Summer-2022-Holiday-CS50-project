@@ -33,11 +33,6 @@ class Listings(models.Model):
     def set_price(self, price):
         self.current_price = price
 
-    def close(self):
-        self.active = False
-        self.winner = self.current_bidder
-        return self.winner
-
 class Bids(models.Model):
     item = models.ForeignKey(Listings, on_delete=models.CASCADE, null=True, related_name="bids_for_item")
     bidder = models.ForeignKey(User,on_delete=models.CASCADE, null=True, related_name="bids_made")
@@ -61,3 +56,17 @@ class Bids(models.Model):
             return True
         else:
             return False
+
+class Comments(models.Model):
+    item = models.ForeignKey(Listings, on_delete=models.CASCADE, null=True, related_name="item_comments")
+    commenter = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="user_comments")
+    comment = models.TextField(max_length=500)
+
+    def set_commenter(self, user):
+        self.commenter = user
+    
+    def set_item(self, item):
+        self.item = item
+
+    def __str__(self) -> str:
+        return f"{self.commenter} commented on {self.item}"
