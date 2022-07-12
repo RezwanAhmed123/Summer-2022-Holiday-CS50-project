@@ -8,29 +8,88 @@
     <ul>
     {% for item in listings %}
         {% if item.active %}
-        <li>
-            Item: <a href="{% url 'listing' item.id %}">{{item.title}}</a>
-            Seller: <a href="{% url 'userinfo' item.seller.id %}">{{ item.seller.username }}</a>
-            Starting price: {{ item.listing_start_price }}
-        </li>   
+        <li class="row">
+            <div class="col-1">
+                {% if item.image %}
+                <img src="{{ item.image }}" alt="{{ item.title }}" class="img-thumbnail">
+                {% else %}
+                {% load static %} <img src="{% static 'auctions/media/no_image.png' %}" alt="No_image" />
+                {% endif %}
+            </div>
+
+            <div class="col-11">
+                <ul>
+                    <li>
+                        Item: <a href="{% url 'listing' item.id %}">{{item.title}}</a>
+                    </li>
+                    <li>
+                        Seller: <a href="{% url 'userinfo' item.seller.id %}">{{ item.seller.username }}</a>
+                    </li>
+                    <li>
+                        {% if item.current_price %}
+                        <strong>
+                            Current Price: 
+                        </strong>
+                        ${{ item.current_price }}
+                        {% else %}
+                        <strong>
+                            Starting Price: 
+                        </strong>
+                        ${{ item.listing_start_price }}
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </li>  
+        <hr>
         {% endif %}
     {% endfor %}
     </ul>
 
-    <h2>Finished Listings</h2>
+    <h2>Inactive Listings</h2>
     <ul>
         {% for item in listings %}
             {% if item.active == False %}
-            <li>
-                Item: <a href="{% url 'listing' item.id %}">{{item.title}}</a>
-                Seller: <a href="{% url 'userinfo' item.seller.id %}">{{ item.seller.username }}</a>
-                {% if item.current_bidder %}
-                Winner: <a href="{% url 'userinfo' item.current_bidder.id %}">{{ item.current_bidder.username }}</a>
-                {% else %}
-                Taken down before it was sold.
-                {% endif %}
-            </li>   
+            <li class="row">
+                <div class="col-1">
+                    {% if item.image %}
+                    <img src="{{ item.image }}" alt="{{ item.title }}" class="img-thumbnail">
+                    {% else %}
+                    {% load static %} <img src="{% static 'auctions/media/no_image.png' %}" alt="No_image" />
+                    {% endif %}
+                </div>
+    
+                <div class="col-11">
+                    <ul>
+                        <li>
+                            Item: <a href="{% url 'listing' item.id %}">{{item.title}}</a>
+                        </li>
+                        <li>
+                            Category: 
+                            {% for category in item.category.all %}
+                            {{ category }},
+                            {% endfor %}
+                        </li>
+                        <li>
+                            Seller: <a href="{% url 'userinfo' item.seller.id %}">{{ item.seller.username }}</a>
+                        </li>
+                        <li>
+                            {% if item.current_bidder %}
+                            Winner: <a href="{% url 'userinfo' item.current_bidder.id %}">{{ item.current_bidder.username }}</a>
+                                {% if item.current_bidder == user %}
+                                <div class="alert alert-success" role="alert">
+                                    You won the item!
+                                  </div>
+                                {% endif %}
+                            {% else %}
+                            Taken down before it was sold.
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </li>  
+            <hr>  
             {% endif %}
         {% endfor %}
-        </ul>
+    </ul>
 {% endblock %}

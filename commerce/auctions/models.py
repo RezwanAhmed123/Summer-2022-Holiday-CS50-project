@@ -1,3 +1,4 @@
+from email.policy import default
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -5,16 +6,24 @@ from django.db import models
 class User(AbstractUser):
     pass
 
+
+class Category(models.Model):
+    category = models.CharField(max_length=64)
+
+    def __str__(self) -> str:
+        return str(self.category)
+
 class Listings(models.Model):
     title = models.CharField(max_length=128)
     description = models.TextField(max_length=500)
     image = models.URLField(blank=True)
+    category = models.ManyToManyField(Category, blank=True, related_name="item_category")
     seller = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="selling_items")
     listing_start_price = models.DecimalField(decimal_places=2,max_digits=10)
     current_price = models.DecimalField(default=0,decimal_places=2,max_digits=10)
     current_bidder = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="currently_winning_item")
     past_bidders = models.ManyToManyField(User, blank=True, related_name="past_bids")
-    watchers = models.ManyToManyField(User, blank=True, related_name="watching_item")
+    watchers = models.ManyToManyField(User, blank=True, related_name="watchlist")
     active = models.BooleanField(default=True)
 
     def __str__(self) -> str:

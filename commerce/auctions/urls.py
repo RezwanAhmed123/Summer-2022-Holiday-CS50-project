@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from . import views
 
@@ -12,7 +13,10 @@ urlpatterns = [
     path("newlisting", views.new_listing, name="newlisting"),
     path("listing/<int:item_id>", views.listing, name="listing"),
     path("edit_listing/<int:item_id>", views.edit_listing, name="editlisting"),
+    path("add_to_watchlist/<int:item_id>", views.add_to_watchlist, name="addtowatchlist"),
     path("add_comment/<int:item_id>", views.add_comment, name="addcomment"),
     path("bid_status/<int:item_id>", views.bidding, name="bidstatus"),
     path("register", views.register, name="register"),
 ]
+
+urlpatterns += staticfiles_urlpatterns()

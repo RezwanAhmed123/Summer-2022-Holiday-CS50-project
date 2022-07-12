@@ -22,12 +22,12 @@ class EditMyInfo(UserChangeForm):
 class NewListingForm(forms.ModelForm):
     class Meta:
         model = Listings
-        fields = ['title', 'description', 'image', 'listing_start_price']
+        fields = ['title', 'description', 'image', 'listing_start_price','category']
 
 class EditListingForm(forms.ModelForm):
     class Meta:
         model = Listings
-        fields = ['title', 'description', 'image', 'active']
+        fields = ['title', 'description', 'image', 'active', 'category']
 
 class NewBidForm(forms.ModelForm):
     class Meta:
@@ -173,6 +173,7 @@ def new_listing(request):
 
 @login_required
 def listing(request, item_id):
+    print(request.POST)
     if request.method == "POST":
         return bidding(request,item_id)
     item = Listings.objects.get(pk=item_id)
@@ -192,6 +193,7 @@ def listing(request, item_id):
     item_active = item.active
     number_of_bids = utils.get_number_of_unique_bidders(item.past_bidders.all())
     comments = item.item_comments.all()
+    on_watchlist = (request.user in item.watchers.all())
     return render(request, "auctions/listing.html",{
         "listing": item,
         "bidding": NewBidForm(),
@@ -199,7 +201,8 @@ def listing(request, item_id):
         "is_seller": is_seller,
         "number_of_bids": number_of_bids,
         "comments": comments,
-        "item_active": item_active
+        "item_active": item_active,
+        "on_watchlist": on_watchlist
     })
 
 @login_required
@@ -212,15 +215,7 @@ def bidding(request,item_id):
             madebid = bidform.save(commit=False)
             user = request.user
             madebid.set_item(item)
-            if len(item.past_bidders.all()) > 0:
-                item.current_bidder = item.set_highest_bidder()
-                current_highest_bid = item.bids_for_item.objects.filter(item=item, bidder=item.current_bidder)
-                current_bid_price = current_highest_bid.bid_price
-                item.current_price = item.set_price(current_bid_price)
-            else:
-                item.current_bidder = None
-                current_bid_price = 0
-            if madebid.accept_bid(current_bid_price):
+            if madebid.accept_bid(item.current_price):
                 madebid.set_bidder(user)
                 item.current_price = madebid.get_bid_price()
                 item.current_bidder = madebid.bidder
@@ -236,18 +231,23 @@ def bidding(request,item_id):
                     "message": message
                 })
             else:
-                current_min_bid = max(item.listing_start_price,current_bid_price)
+                current_min_bid = max(item.listing_start_price,item.current_price)
+                is_winning = (item.current_bidder == request.user)
+                is_seller = (item.seller == request.user)
                 comments = item.item_comments.all()
+                on_watchlist = (request.user in item.watchers.all())
                 message = f"You need a higher bid! The current minimum bid is ${current_min_bid}!"
                 return render(request, "auctions/listing.html",{
                 "listing": item,
                 "bidding": bidform,
+                "is_winning": is_winning,
+                "is_seller": is_seller,
                 "message": message,
                 "number_of_bids": number_of_bids,
                 "item_price": item.current_price,
-                "comments": comments
+                "comments": comments,
+                "on_watchlist": on_watchlist
             })
-    item.current_price = current_highest_bid
     item.save()
     is_winning = (item.current_bidder == request.user)
     return render(request, "auctions/bid_status.html",{
@@ -274,6 +274,21 @@ def edit_listing(request, item_id):
                 "listing_form": EditListingForm(instance=item),
                 "item": item
                 })
+
+@login_required
+def add_to_watchlist(request, item_id):
+    user = request.user
+    item = Listings.objects.get(pk=item_id)
+    if request.method == "POST":
+        if request.POST['confirm']=='confirm':
+            if user in item.watchers.all():
+                item.watchers.remove(user)
+            else:
+                item.watchers.add(user)
+        return HttpResponseRedirect(reverse("listing", args=(item_id,)))
+    return render(request, "auctions/add_to_watchlist.html", {
+        "item":item
+    })
 
 @login_required
 def add_comment(request,item_id):

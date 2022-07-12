@@ -2,52 +2,86 @@
 
 {% block body %}
 <div class="container-fluid">
-    <h2> Item: {{ listing.title }} </h2>
-    <div>
-        Seller: <a href="{% url 'userinfo' listing.seller.id %}">{{ listing.seller.username }}</a>
-    </div>
-    
-    <div>
-        Description: {{ listing.description }}
-    </div>
-    
-    <div>
-        {% if listing.image %}
-        <img src="{{ listing.image }}" alt="{{ listing.title }}" class="img-thumbnail" width="500", height="500">
-    
-        {% else %}
-            <h2>No image for this item</h2>
-        {% endif %}
-    </div>
-    
-    <div>
-        {% if listing.current_price %}
-        Current Price: ${{ listing.current_price }}
-        {% else %}
-        Starting price: ${{ listing.listing_start_price }}
-        {% endif %}
+    <div class="row">
+        <div class="col-10">
+            <h2> Item: {{ listing.title }} </h2>
+        </div>
+        <div class="col-2">
+            {% if is_seller == False %}
+            <a href="{% url 'addtowatchlist' listing.id %}" class="btn btn-primary">Add/remove from watchlist</a>
+            <div class="alert alert-light" role="alert">
+                {% if on_watchlist %}
+                Item on watchlist.
+                {% else %}
+                Item not on watchlist.
+                {% endif%}
+            </div>
+            {% endif %}
+        </div>
     </div>
 
-    <div>
-        Current number of bids: {{ number_of_bids }}.
-        {% if is_winning %}
-        Congrats, you are currently the highest bidder!
-        {% elif is_seller %}
-        You are the seller.
-        <a href="{% url 'editlisting' listing.id %}" class="btn btn-primary">Close/Edit your listing</a>
-        {% elif listing.active == False %}
-        The bidding has ended. The winner is {{ listing.current_bidder }}
-        {% else %}
-        <form action="{% url 'bidstatus' listing.id %}" method="post">
-            {% csrf_token %}
-            {{ bidding }}
-            <input type="submit" class="btn btn-success">
-        </form>
-        {% endif %}
-
-        {% if message %}
-            {{ message }}
-        {% endif %}
+    <div class="mx-auto" style="width: 900px;">
+        <div>
+            <strong>
+                Seller:
+            </strong>
+            <a href="{% url 'userinfo' listing.seller.id %}">{{ listing.seller.username }}</a>
+        </div>
+        
+        <div>
+            <strong>
+                Description: 
+            </strong>
+            {{ listing.description }}
+        </div>
+        
+        <div>
+            {% if listing.image %}
+            <img src="{{ listing.image }}" alt="{{ listing.title }}" class="img-thumbnail" width="500", height="500">
+        
+            {% else %}
+            {% load static %} <img src="{% static 'auctions/media/no_image.png' %}" alt="No_image" />
+            {% endif %}
+        </div>
+        
+        <div>
+            {% if listing.current_price %}
+            <strong>
+                Current Price: 
+            </strong>
+            ${{ listing.current_price }}
+            {% else %}
+            <strong>
+                Starting Price: 
+            </strong>
+            ${{ listing.listing_start_price }}
+            {% endif %}
+        </div>
+    
+        <div>
+            <strong>
+                Current number of bids: 
+            </strong>
+            {{ number_of_bids }}.
+            {% if is_winning %}
+            Congrats, you are currently the highest bidder!
+            {% elif is_seller %}
+            You are the seller.
+            <a href="{% url 'editlisting' listing.id %}" class="btn btn-primary">Close/Edit your listing</a>
+            {% elif listing.active == False %}
+            The bidding has ended. The winner is <a href="{% url 'userinfo' listing.current_bidder.id %}">{{ listing.current_bidder }}</a>
+            {% else %}
+            <form action="{% url 'bidstatus' listing.id %}" method="post">
+                {% csrf_token %}
+                {{ bidding }}
+                <input type="submit" class="btn btn-success">
+            </form>
+            {% endif %}
+    
+            {% if message %}
+                {{ message }}
+            {% endif %}
+        </div>
     </div>
 
     <div>
@@ -68,7 +102,5 @@
         <h3>No comments yet.</h3>
         {% endfor %}
     </div>
-
 </div>
-
 {% endblock %}

@@ -1,0 +1,18 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="row">
+    <div class="mt-2 col-12">
+        <Strong>Please confirm</Strong>
+    </div>
+    <div class="mt-2 col-12">
+        <form action="{% url 'addtowatchlist' item.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="cancel" class="btn btn-secondary" name="cancel">
+            <input type="submit" value="confirm" class="btn btn-success" name="confirm">
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}
