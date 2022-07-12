@@ -221,11 +221,13 @@ def bidding(request,item_id):
                     "message": message
                 })
             else:
-                message = f"You need a higher bid! The current highest bid is ${current_bid_price}!"
+                current_min_bid = max(item.listing_start_price,current_bid_price)
+                message = f"You need a higher bid! The current minimum bid is ${current_min_bid}!"
                 return render(request, "auctions/listing.html",{
                 "listing": item,
                 "bidding": bidform,
                 "message": message,
+                "number_of_bids": number_of_bids,
                 "item_price": item.current_price
             })
     item.current_price = current_highest_bid
