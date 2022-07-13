@@ -26,4 +26,11 @@ def update_past_bidders(item, bid_list):
             item.past_bidders.add(bidder)
     else:
         item.past_bidders.set([])
+
+def get_items_in_category(item_list, category):
+    items = []
+    for item in item_list:
+        if category in item.category.all():
+            items.append(item)
+    return items
     

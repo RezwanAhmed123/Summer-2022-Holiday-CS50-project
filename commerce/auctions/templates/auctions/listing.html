@@ -34,7 +34,12 @@
             </strong>
             {{ listing.description }}
         </div>
-        
+        <div>
+            Category: 
+            {% for category in listing.category.all %}
+            <a href="{% url 'category' category %}">{{ category }}</a>,
+            {% endfor %}
+        </div>
         <div>
             {% if listing.image %}
             <img src="{{ listing.image }}" alt="{{ listing.title }}" class="img-thumbnail" width="500", height="500">

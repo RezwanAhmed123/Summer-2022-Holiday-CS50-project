@@ -7,8 +7,8 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ("username", "date_joined", "last_login")
 
 class ListingAdmin(admin.ModelAdmin):
-    list_display = ("title", "seller", "listing_start_price","current_price", "current_bidder")
-    filter_horizontal = ("past_bidders",)
+    list_display = ("title", "seller", "current_bidder", "current_price")
+    filter_horizontal = ("category",)
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ("commenter", "item")
@@ -16,9 +16,12 @@ class CommentAdmin(admin.ModelAdmin):
 class BidAdmin(admin.ModelAdmin):
     list_display = ("bidder", "item", "bid_price")
 
+class CategoryAdmin(admin.ModelAdmin):
+    readonly_fields = ('id',)
+
 # Register your models here.
 admin.site.register(User, UserAdmin)
 admin.site.register(Listings, ListingAdmin)
 admin.site.register(Bids, BidAdmin)
 admin.site.register(Comments, CommentAdmin)
-admin.site.register(Category)
+admin.site.register(Category, CategoryAdmin)

@@ -26,6 +26,12 @@
                         Seller: <a href="{% url 'userinfo' item.seller.id %}">{{ item.seller.username }}</a>
                     </li>
                     <li>
+                        Category: 
+                        {% for category in item.category.all %}
+                        <a href="{% url 'category' category %}">{{ category }}</a>,
+                        {% endfor %}
+                    </li>
+                    <li>
                         {% if item.current_price %}
                         <strong>
                             Current Price: 
@@ -67,7 +73,7 @@
                         <li>
                             Category: 
                             {% for category in item.category.all %}
-                            {{ category }},
+                            <a href="{% url 'category' category %}">{{ category }}</a>,
                             {% endfor %}
                         </li>
                         <li>

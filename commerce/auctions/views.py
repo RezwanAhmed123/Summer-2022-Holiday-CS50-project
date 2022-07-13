@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import Bids, Listings, User, Comments
+from .models import Bids, Listings, User, Comments, Category
 from . import utils
 
 #forms
@@ -38,6 +38,11 @@ class NewCommentForm(forms.ModelForm):
     class Meta:
         model = Comments
         fields = ['comment']
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['category']
 
 #views
 def index(request):
@@ -310,3 +315,26 @@ def add_comment(request,item_id):
         "item": item,
         "comment_form": NewCommentForm()
     })
+
+@login_required
+def category(request, name):
+    category = Category.objects.get(category=name)
+    items = category.item_category.all()
+    return render(request, "auctions/category.html",{
+        "category": category,
+        "items":items
+    })
+
+def add_category(request):
+    if request.method == "POST":
+        categoryform = CategoryForm(request.POST)
+        if categoryform.is_valid():
+            categoryform.save()
+            return HttpResponseRedirect(reverse(index))
+        else:
+            return render(request, "auctions/add_category.html",{
+                "categoryform": CategoryForm,
+            })
+    return render(request, "auctions/add_category.html",{
+                "categoryform": CategoryForm,
+            })
