@@ -1,0 +1,16 @@
+{% extends "auctions/layout.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block body %}
+    <h2> {{ item.title }} </h2>
+    <div class="mx-auto" style="width: 800px;">
+        <form action="{% url 'editlisting' item.id %}" method="post">
+            {% csrf_token %}
+            {{ listing_form|crispy }}
+            <div class="alert alert-secondary" role="alert">Please note that the starting price cannot be changed anymore</div>
+            <input type="submit" class="btn btn-primary">
+        </form>
+    </div>
+    
+{% endblock %}

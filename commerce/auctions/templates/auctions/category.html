@@ -1,0 +1,49 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings in {{ category.category }}</h2>
+    <h2> {{ category }} </h2>
+    <ul>
+    {% for item in items %}
+        {% if item.active %}
+        <li class="row">
+            <div class="col-1">
+                {% if item.image %}
+                <img src="{{ item.image }}" alt="{{ item.title }}" class="img-thumbnail">
+                {% else %}
+                {% load static %} <img src="{% static 'auctions/media/no_image.png' %}" alt="No_image" />
+                {% endif %}
+            </div>
+
+            <div class="col-11">
+                <ul>
+                    <li>
+                        Item: <a href="{% url 'listing' item.id %}">{{item.title}}</a>
+                    </li>
+                    <li>
+                        Seller: <a href="{% url 'userinfo' item.seller.id %}">{{ item.seller.username }}</a>
+                    </li>
+                    <li>
+                        {% if item.current_price %}
+                        <strong>
+                            Current Price: 
+                        </strong>
+                        ${{ item.current_price }}
+                        {% else %}
+                        <strong>
+                            Starting Price: 
+                        </strong>
+                        ${{ item.listing_start_price }}
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </li>  
+        <hr>
+        {% endif %}
+    {% endfor %}
+    </ul>
+    
+    <a href="{% url 'addcategory' %}" class="btn btn-primary">Create a new category</a>
+
+{% endblock %}

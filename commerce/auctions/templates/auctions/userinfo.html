@@ -1,0 +1,141 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{ user.username }}</h2>
+
+    {% if is_current_user %}
+    <a href="{% url 'editmyinfo' %}" class="btn btn-success">Edit my account information</a>
+    {% endif %}
+
+    <h2>Current Listings</h2>
+    <ul>
+        {% for item in user_selling_items %}
+        <li class="row">
+            <div class="col-1">
+                {% if item.image %}
+                <img src="{{ item.image }}" alt="{{ item.title }}" class="img-thumbnail">
+                {% else %}
+                {% load static %} <img src="{% static 'auctions/media/no_image.png' %}" alt="No_image" />
+                {% endif %}
+            </div>
+
+            <div class="col-11">
+                <ul>
+                    <li>
+                        Item: <a href="{% url 'listing' item.id %}">{{item.title}}</a>,
+                    </li>
+                    <li>
+                        Category: 
+                        {% for category in item.category.all %}
+                        <a href="{% url 'category' category %}">{{ category }}</a>,
+                        {% endfor %}
+                    </li>
+                    <li>
+                        {% if item.current_price %}
+                        <strong>
+                            Current Price: 
+                        </strong>
+                        ${{ item.current_price }}
+                        {% else %}
+                        <strong>
+                            Starting Price: 
+                        </strong>
+                        ${{ item.listing_start_price }}
+                        {% endif %}
+                    </li>
+                </ul>
+        </li>
+        <hr>
+        {% endfor %}
+    </ul>
+
+    <h2>Current bids</h2>
+    <ul>
+        {% for bid in user_bids %}
+        <li class="row">
+            <div class="col-1">
+                {% if bid.item.image %}
+                <img src="{{ bid.item.image }}" alt="{{ item.title }}" class="img-thumbnail">
+                {% else %}
+                {% load static %} <img src="{% static 'auctions/media/no_image.png' %}" alt="No_image" />
+                {% endif %}
+            </div>
+
+            <div class="col-11">
+                <ul>
+                    <li>
+                        Item: <a href="{% url 'listing' bid.item.id %}">{{bid.item.title}}</a>,
+                    </li>
+                    <li>
+                        Category: 
+                        {% for category in item.category.all %}
+                        <a href="{% url 'category' category %}">{{ category }}</a>,
+                        {% endfor %}
+                    </li>
+                    {% if bid.item.active %}
+                    <li>
+                        {{ bid.bidder }}'s last bid price: {{ bid.bid_price }}
+                    </li>
+                    <li>
+                        Current Price: ${{ bid.item.current_price }}
+                    </li>
+                    {% else %}
+                    <li>
+                        Bidding for {{bid.item.title}} ended.
+                        {% if bid.item.current_bidder == request.user %}
+                        <div class="alert alert-success" role="alert">
+                            You won the item!
+                        </div>
+                        {% else %}
+                        <a href="{% url 'userinfo' bid.item.current_bidder.id %}">{{ bid.item.current_bidder }}</a> won the item!
+                        {% endif %}
+                    </li>
+                    {% endif %}
+                </ul>
+        </li>
+        <hr>
+        {% endfor %}
+    </ul>
+
+    <h2>Watchlist</h2>
+    <ul>
+        {% for item in user.watchlist.all %}
+        <li class="row">
+            <div class="col-1">
+                {% if item.image %}
+                <img src="{{ item.image }}" alt="{{ item.title }}" class="img-thumbnail">
+                {% else %}
+                {% load static %} <img src="{% static 'auctions/media/no_image.png' %}" alt="No_image" />
+                {% endif %}
+            </div>
+
+            <div class="col-11">
+                <ul>
+                    <li>
+                        Item: <a href="{% url 'listing' item.id %}">{{ item.title }}</a>,
+                    </li>
+                    <li>
+                        Category: 
+                        {% for category in item.category.all %}
+                        <a href="{% url 'category' category %}">{{ category }}</a>,
+                        {% endfor %}
+                    </li>
+                    <li>
+                        {% if item.current_price %}
+                        <strong>
+                            Current Price: 
+                        </strong>
+                        ${{ item.current_price }}
+                        {% else %}
+                        <strong>
+                            Starting Price: 
+                        </strong>
+                        ${{ item.listing_start_price }}
+                        {% endif %}
+                    </li>
+                </ul>
+        </li>
+        <hr>
+        {% endfor %}
+    </ul>
+{% endblock %}

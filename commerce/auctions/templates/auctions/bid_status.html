@@ -1,0 +1,40 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="container-fluid">
+    <h2> Item: {{ listing.title }} </h2>
+    <div>
+        Seller: <a href="{% url 'userinfo' listing.seller.id %}">{{ listing.seller.username }}</a>
+    </div>
+    
+    <div>
+        Description: {{ listing.description }}
+    </div>
+    
+    <div>
+        {% if listing.image %}
+        <img src="{{ listing.image }}" alt="{{ listing.title }}" class="img-thumbnail" width="500", height="500">
+    
+        {% else %}
+            <h2>No image for this item</h2>
+        {% endif %}
+    </div>
+    
+    <div>
+        {% if listing.current_price %}
+        Current Price: ${{ listing.current_price }}
+        {% else %}
+        Starting price: ${{ listing.listing_start_price }}
+        {% endif %}
+    </div>
+
+    <div class="alert alert-success" role="alert">
+        Current number of bids: {{ number_of_bids }}.
+        Congrats, your bid was successful!
+    </div>
+
+    <a href="{% url 'listing' listing.id %}" class="btn btn-success">Back to listing page</a>
+
+</div>
+
+{% endblock %}
