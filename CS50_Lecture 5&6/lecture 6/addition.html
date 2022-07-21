@@ -1,0 +1,103 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" ></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        #app {
+            position: relative;
+            text-align: center;
+            font-family: sans-serif;
+            top: 30%;
+        }
+        #problem {
+            font-size: 40px;
+        }
+        
+        .incorrect {
+            color: red;
+        }
+
+        #winner {
+            font-size: 80px;
+            color: green;
+        }
+
+    </style>
+    <title>Addition</title>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script type="text/babel">
+
+        function App(){
+        //const [num1, setNum1] = React.useState(1);
+        //const [num2, setNum2] = React.useState(2); -> this becomes messy very fast, dont use this
+
+        //use the below convention
+        const [state, setState] = React.useState({
+            num1: Math.ceil(Math.random()*10),
+            num2: Math.ceil(Math.random()*10),
+            score: 0,
+            response: "",
+            incorrect: false,
+        });
+
+        function inputKeyPress(event){
+            if (event.key === "Enter"){
+                const answer = parseInt(state.response);
+                if (state.num1 + state.num2 === answer){
+                    //user got question right
+                    setState({
+                        ...state,
+                        num1: Math.ceil(Math.random()*10) ,
+                        num2: Math.ceil(Math.random()*10) ,
+                        score: state.score + 1,
+                        response: "",
+                        incorrect: false,
+                    });
+                } else {
+                    //user got question wrong
+                    setState({
+                        ...state,
+                        score: state.score - 1,
+                        response: "",
+                        incorrect: true,
+                    });
+                }
+            };
+        }
+
+        function updateResponse(event){
+            setState({
+                ... state, //spread operator to tell them that everything else is same except for this specific state.
+                response: event.target.value
+            });
+        }
+
+        if (state.score === 10){
+            return (
+                <div id="winner">
+                    You Won!
+                </div>
+            );
+        } else {
+            return (
+            <div>
+                <div className={state.incorrect ? "incorrect":""} id="problem" >{state.num1} + {state.num2}</div>
+                <input autoFocus={true} onChange={updateResponse} value={state.response} onKeyPress={inputKeyPress} />
+                <div>The score is: {state.score}</div>
+            </div>
+            );
+        }
+                
+        };
+
+        ReactDOM.render(<App />, document.querySelector('#app'));
+    </script>
+</body>
+</html>
