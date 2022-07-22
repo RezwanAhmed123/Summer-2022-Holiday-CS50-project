@@ -1,0 +1,48 @@
+textarea {
+    min-height: 400px;
+}
+
+.card {
+    padding: 20px;
+    margin-bottom: 10px;
+    animation-name: hide;
+    animation-duration: 3s;
+    animation-fill-mode: forwards;
+    animation-play-state: paused;
+}
+
+.archive{
+    border-radius: 5px;
+    background-color: grey;
+    color: white;
+}
+
+.unarchive{
+    border-radius: 5px;
+    background-color: white;
+    color: grey;
+}
+
+@keyframes hide {
+    0% {
+        opacity: 1;
+        height: 100%;
+        line-height: 100%;
+        padding: 20px;
+        margin-bottom: 10px;
+    }
+    25% {
+        opacity: 0;
+        height: 100%;
+        line-height: 100%;
+        padding: 20px;
+        margin-bottom: 10px;
+    }
+    100% {
+        opacity: 0;
+        height: 0px;
+        line-height: 0px;
+        padding: 0px;
+        margin-bottom: 0px;
+    }
+}
